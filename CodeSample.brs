@@ -36,11 +36,11 @@ end function
 'param sourceString {string} - A string that may contain placeholders of the form {0} or {key}
 'param params {dynamic} - Can be a string, array or associative array
 'return {string} - The original string, with placeholders substituted.
-'sample - FormatString("This is {0} test", "a") - This is a test
-'sample - FormatString("This {1} {0} test ", "a") - This {1} a test
-'sample - FormatString("This {1} {0} test", ["a", "is"]) - This is a test
-'sample - FormatString("https://{baseurl}/discovery/{endpoint}/{version}/", {"baseurl": "mydomain.com", "endpoint": "metadata", "version": "v1"}) - https://mydomain.com/discovery/metadata/v1/
-function FormatString(sourceString as string, params as dynamic) as string
+'sample - formatString("This is {0} test", "a") - This is a test
+'sample - formatString("This {1} {0} test ", "a") - This {1} a test
+'sample - formatString("This {1} {0} test", ["a", "is"]) - This is a test
+'sample - formatString("https://{baseurl}/discovery/{endpoint}/{version}/", {"baseurl": "mydomain.com", "endpoint": "metadata", "version": "v1"}) - https://mydomain.com/discovery/metadata/v1/
+function formatString(sourceString as string, params as dynamic) as string
 	paramsType = type(params)
 	if paramsType = "roAssociativeArray"
 		'if paramsType is roAssociativeArray then find each key in the format {key} and replace with value
@@ -57,7 +57,7 @@ function FormatString(sourceString as string, params as dynamic) as string
 				if instr(1, sourceString, "{"+i.tostr()+"}") <> 0 then sourceString = sourceString.replace("{"+i.tostr()+"}", params[i].tostr())
 			end for
 		else if paramsType <> "<uninitialized>" and paramsType <> "invalid" and tpi <> "roinvalid" then
-			'If this fails then identify the paramsType and add a condition to handle it.
+			'generic condition to handle valid objects. this can fail in which case we need more special handling.
 			sourceString = sourceString.replace("{0}", params.tostr())
 		end if
 	end if
@@ -65,7 +65,7 @@ function FormatString(sourceString as string, params as dynamic) as string
 end function
 
 '***************************************************************************************************************
-'											Validation functions
+'												Validation functions
 '***************************************************************************************************************
 
 'description - Validates if the requested path on the given object is valid and matches the value provided.
